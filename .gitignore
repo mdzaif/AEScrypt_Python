@@ -1,0 +1,11 @@
+env/
+weights.zip
+*.py
+src/*.txt
+src/*.aes
+test.txt
+*.aes
+*.spec
+src/dist/
+src/build/
+
