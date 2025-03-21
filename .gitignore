@@ -1,6 +1,6 @@
 env/
 weights.zip
-*.py
+test.py
 src/*.txt
 src/*.aes
 test.txt
