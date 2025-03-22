@@ -1,5 +1,5 @@
 env/
-weights.zip
+*.zip
 test.py
 src/*.txt
 src/*.aes
@@ -8,4 +8,3 @@ test.txt
 *.spec
 src/dist/
 src/build/
-
