@@ -5,7 +5,9 @@ AEScrypt windows terminal tool develop with python. Current AEScrypt software is
 
 <ul>
   <li>Dynamic buffer size to adjust with system requirment. So, it will help you to achieve the best performance while encrypt the file.</li>
-  <li>Make more secure. You have to use same tool to encrypt and decrypt your file.
+  <li>Make more secure. You have to use same tool to encrypt and decrypt your file.</li>
+  <li>Fix some bugs. </li>
+  <li>Add progress bar.</li>
 </ul>
 
 ## Usages
