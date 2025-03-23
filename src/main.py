@@ -1,3 +1,19 @@
+# aes-tool - A simple encryption tool
+# Copyright (C) 2025 Md. Zaif Imam Mahi
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 import argparse
 import sys
 import getpass
@@ -8,37 +24,39 @@ from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
 import psutil
 import time
-
+from rich.progress import Progress
 
 # Constants
+VERSION = "1.1.0"
 SALT_SIZE = 16
 KEY_SIZE = 32
 NONCE_SIZE = 12
 TAG_SIZE = 16
 ITERATIONS = 100_000
 
+
 def get_dynamic_buffer_size(file_path):
     """Determine the buffer size based on file size dynamically."""
-    try:
-        file_size = os.path.getsize(file_path)
-    except FileNotFoundError:
-        print("Error: File not found!")
-        sys.exit(1)
+    file_size = os.path.getsize(file_path)
     total_ram = psutil.virtual_memory().total
     print(f"File path: {file_path}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes")
-    if total_ram <= 4 * 1024 * 1024 * 1024:  # 4 GB RAM
+    cal = 1024 * 1024 * 1024
+    if total_ram <= 2 * cal: # 2 GB RAM
+        return 64 * 1024
+    if total_ram <= 4 * cal:  # 4 GB RAM
         return 128 * 1024  # 128 KB
-    elif total_ram <= 8 * 1024 * 1024 * 1024:  # 8 GB RAM
+    elif total_ram <= 8 * cal:  # 8 GB RAM
         return 256 * 1024  # 256 KB
     else:
-        if file_size < 500 * 1024 * 1024:  # < 500 MB
+        cal1 = 1024 * 1024
+        if file_size < 500 * cal1:  # < 500 MB
             return 64 * 1024   # 64 KB
-        elif file_size < 2 * 1024 * 1024 * 1024:  # < 2 GB
+        elif file_size < 2 * cal:  # < 2 GB
             return 256 * 1024  # 256 KB
-        elif file_size < 10 * 1024 * 1024 * 1024:  # < 10 GB
-            return 1 * 1024 * 1024  # 1 MB
+        elif file_size < 10 * cal:  # < 10 GB
+            return 1 * cal1  # 1 MB
         else:  # 10+ GB
-            return 4 * 1024 * 1024  # 4 MB
+            return 4 * cal1  # 4 MB
 
 def derive_key(password: str, salt: bytes) -> bytes:
     """Derive a 256-bit key from the password using PBKDF2."""
@@ -48,19 +66,24 @@ def encrypt_file(file_path, buffersize, password, output_dir):
     """Encrypt a file using AES-GCM (Authenticated Encryption)."""
     start = time.perf_counter() # starting time counter
     try:
-        salt = get_random_bytes(SALT_SIZE)
-        key = derive_key(password, salt)
-        nonce = get_random_bytes(NONCE_SIZE)
-        
-        cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-        encrypted_file = os.path.join(output_dir, Path(file_path).name + ".aes")
-
-        with open(file_path, "rb") as f_in, open(encrypted_file, "wb") as f_out:
-            f_out.write(salt + nonce)  # Store salt + nonce for decryption
-            while chunk := f_in.read(buffersize):
-                f_out.write(cipher.encrypt(chunk))
-            tag = cipher.digest()
-            f_out.write(tag)  # Store tag at the end
+        with Progress() as progress:
+            encrypt_task = progress.add_task('[cyan]Encrypt file...')
+            salt = get_random_bytes(SALT_SIZE)
+            key = derive_key(password, salt)
+            nonce = get_random_bytes(NONCE_SIZE)
+            
+            cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+            encrypted_file = os.path.join(output_dir, Path(file_path).name + ".aes")
+    
+            with open(file_path, "rb") as f_in, open(encrypted_file, "wb") as f_out:
+                f_out.write(salt + nonce)  # Store salt + nonce for decryption
+                while chunk := f_in.read(buffersize):
+                    f_out.write(cipher.encrypt(chunk))
+                tag = cipher.digest()
+                f_out.write(tag)  # Store tag at the end
+                while not progress.finished:
+                        progress.update(encrypt_task, advance=1)
+                        time.sleep(0.005)
         ending = time.perf_counter() # end time counter
         print(f"Encryption successful! File saved at: {encrypted_file}")
         print(f"Total encryption time: {ending-start:.6f} seconds")
@@ -74,27 +97,33 @@ def decrypt_file(file_path, password, output_dir):
     """Decrypt a file using AES-GCM (Authenticated Decryption)."""
     start = time.perf_counter() # starting time counter
     try:
-        with open(file_path, "rb") as f_in:
-            salt = f_in.read(SALT_SIZE)
-            nonce = f_in.read(NONCE_SIZE)
-            key = derive_key(password, salt)
+        with Progress() as progress:
+            decrypt_task = progress.add_task('[cyan]Decrypt file...')
+            with open(file_path, "rb") as f_in:
+                salt = f_in.read(SALT_SIZE)
+                nonce = f_in.read(NONCE_SIZE)
+                key = derive_key(password, salt)
 
-            cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+                cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
 
-            decrypted_file = os.path.join(output_dir, Path(file_path).stem)
+                decrypted_file = os.path.join(output_dir, Path(file_path).stem)
 
-            with open(decrypted_file, "wb") as f_out:
-                ciphertext = f_in.read()
-                tag = ciphertext[-TAG_SIZE:]  # Extract authentication tag
-                ciphertext = ciphertext[:-TAG_SIZE]  # Remove tag from ciphertext
-                f_out.write(cipher.decrypt_and_verify(ciphertext, tag))
-                
-            ending = time.perf_counter() # end time counter
-            print(f"Decryption successful! File saved at: {decrypted_file}")
-            print(f"Total encryption time: {ending-start:.6f} seconds")
+                with open(decrypted_file, "wb") as f_out:
+                    ciphertext = f_in.read()
+                    tag = ciphertext[-TAG_SIZE:]  # Extract authentication tag
+                    ciphertext = ciphertext[:-TAG_SIZE]  # Remove tag from ciphertext
+                    f_out.write(cipher.decrypt_and_verify(ciphertext, tag))
+                    while not progress.finished:
+                        progress.update(decrypt_task, advance=1)
+                        time.sleep(0.05)
+                ending = time.perf_counter() # end time counter
+
+                print(f"Decryption successful! File saved at: {decrypted_file}")
+                print(f"Total encryption time: {ending-start:.6f} seconds")
 
     except ValueError:
         print("Error: Decryption failed! Incorrect password or corrupted file.")
+        os.remove(os.path.join(output_dir, Path(file_path).stem))
     except FileNotFoundError:
         print("Error: File not found.")
     except Exception as e:
@@ -102,7 +131,8 @@ def decrypt_file(file_path, password, output_dir):
 
 def main():
     #arguments
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="AES Encryption Tool")
+    parser.add_argument('-v', '--version', action='version', version=f"AES Tool {VERSION}")
     parser.add_argument('-m', '--mode', type=str, choices=['e', 'd'], help="Mode: 'e' for encryption, 'd' for decryption")
     parser.add_argument('-f', '--file', type=str, help="File to encrypt/decrypt")
     parser.add_argument('-p', '--password', type=str, help="Password (or provide a file path containing the password)")
@@ -112,13 +142,23 @@ def main():
     if not args.mode or not args.file:
         parser.print_help()
         sys.exit(2)
+
+    # Resolve files
+    if os.path.isfile(args.file):
+        if not args.file.endswith('.aes') and not args.mode == 'e':
+            print("Error: not .aes file!")
+            sys.exit(3)
+    else:
+        print("File not found!")
+        sys.exit(4)
+    
     # Resolve password
     if args.password and os.path.isfile(args.password):
         with open(args.password, "r") as f:
             password = f.readline().strip()
         confirm_password = password
 
-    elif args.password:
+    elif args.password and args.mode == 'e':
         confirm_password = getpass.getpass("Confirm password: ")
 
     else:
@@ -127,33 +167,32 @@ def main():
             confirm_password = getpass.getpass("Confirm password: ")
         else:
             password = getpass.getpass("Enter the password: ")
-            confirm_password = password
         
-    if password != confirm_password:
+    if password != confirm_password and args.mode == "e":
         print("Error: Password do not match.")
-        sys.exit(3)
-    else:
-        print("Password matched!")
+        del confirm_password
+        sys.exit(5)
 
     # Ensure output directory exists
     os.makedirs(args.output, exist_ok=True)
+    buffersize= get_dynamic_buffer_size(args.file)
 
     if args.mode == "e":
-        buffersize= get_dynamic_buffer_size(args.file)
         print(f"Buffer size: {buffersize}")
         encrypt_file(args.file, buffersize, password, args.output)
+
     elif args.mode == "d":
+        
         file_size = os.path.getsize(args.file)
         total_ram = psutil.virtual_memory().total
-        print(f"File path: {args.file}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes")
-        if not args.file.endswith(".aes"):
-            print("Error: Decryption requires a '.aes' file.")
-            sys.exit(3)
+        print(f"File path: {args.file}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes\nLrage file may take time")
         decrypt_file(args.file, password, args.output)
+            
 
     # Wipe password from memory
     del password
-    del confirm_password
 
 if __name__ == "__main__":
     main()
+
+
