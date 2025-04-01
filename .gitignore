@@ -8,3 +8,5 @@ test.txt
 *.spec
 src/dist/
 src/build/
+dist/
+build/

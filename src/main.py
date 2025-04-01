@@ -167,19 +167,21 @@ def main():
             confirm_password = getpass.getpass("Confirm password: ")
         else:
             password = getpass.getpass("Enter the password: ")
-        
-    if password != confirm_password and args.mode == "e":
-        print("Error: Password do not match.")
-        del confirm_password
-        sys.exit(5)
+
 
     # Ensure output directory exists
     os.makedirs(args.output, exist_ok=True)
     buffersize= get_dynamic_buffer_size(args.file)
 
     if args.mode == "e":
-        print(f"Buffer size: {buffersize}")
-        encrypt_file(args.file, buffersize, password, args.output)
+        if password != confirm_password:
+            print("Error: password not matched!")
+            del confirm_password
+            sys.exit(5)
+        else:
+            print("Success: password matched!")
+            print(f"Buffer size: {buffersize}")
+            encrypt_file(args.file, buffersize, password, args.output)
 
     elif args.mode == "d":
         
@@ -193,6 +195,6 @@ def main():
     del password
 
 if __name__ == "__main__":
+    global password
+    global confirm_password
     main()
-
-
