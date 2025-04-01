@@ -50,3 +50,18 @@ Now move open `Edit the system environment variables` then follow those images
 <img src='resources/Capture3.PNG'></img>
 
 5. Your all done :)
+
+## Linux setup
+
+1. Downlaod binary file from <a href="https://drive.google.com/drive/folders/1oFs8Ghn3kVqO2trSB9fpzlqojnX0wjbv?usp=drive_link">here</a>.
+
+2. Then extract it and finally follow those command
+
+```bash
+cd  < dowloanded file > &&\
+sudo chmod +x install.sh &&\
+./install.sh
+```
+
+3. Your all done :)
+
