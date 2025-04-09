@@ -77,7 +77,7 @@ sudo chmod +x install.sh &&\
       <td rowspan='2'> Windows 10+ </td>
       <td>aes-tool (terminal tool)</td>
       <td>1.1.0</td>
-      <td><a href="https://drive.google.com/uc?export=download&id=1di9-QCuYmGPgV3xnY4E_LSjmpyyG7T_l">aes-tool-winv1.1.0</a></td>
+      <td><a href="https://drive.google.com/uc?id=14nd6W5-mQZTtO9aHBYufIZF9pMpfUl4L&export=download">aes-tool-winv1.1.0</a></td>
     </tr>
     <tr>
       <td>aes-tool (GUI & terminal tool)</td>
@@ -88,7 +88,7 @@ sudo chmod +x install.sh &&\
       <td rowspan='2'>Linux (tested on debian based)</td>
       <td>aes-tool (terminal tool)</td>
       <td>1.1.0</td>
-      <td><a href="https://drive.google.com/uc?export=download&id=1oFs8Ghn3kVqO2trSB9fpzlqojnX0wjbv">aes-tool-linux-v1.1.0</a></td>
+      <td><a href="https://drive.google.com/uc?id=19U16UEoRObDu5T-LSQbVQrB7MPNbX7ag&export=download">aes-tool-linux-v1.1.0</a></td>
     </tr>
     <tr>
       <td>aes-tool (GUI & terminal tool)</td>
