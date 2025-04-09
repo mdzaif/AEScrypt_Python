@@ -1,6 +1,6 @@
 env/
 *.zip
-test.py
+tes*.py
 src/*.txt
 src/*.aes
 test.txt
@@ -10,3 +10,6 @@ src/dist/
 src/build/
 dist/
 build/
+gui/src/__p*
+pass.txt
+release/

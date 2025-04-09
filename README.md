@@ -24,9 +24,6 @@ aes-tool.exe -m e -f ./weights.zip -p ./AEScrypt_Python/src/pass.txt -p ./pass.t
 aes-tool.exe -m d -f ./weights.zip.aes -p ./pass.txt -o ./
 ```
 
-## Tool
-
-You can download this tool's binary file from <a href="https://drive.google.com/drive/folders/1f-4FB7cmBeaqILe8Ey3wUIWYuNkAvdVP?usp=sharing">here</a>.
 
 ## Setup
 
@@ -65,3 +62,10 @@ sudo chmod +x install.sh &&\
 
 3. Your all done :)
 
+## Assets
+
+windows             |
+---------|
+Packages | Version |
+---------|----------|
+aes-toolv1.1

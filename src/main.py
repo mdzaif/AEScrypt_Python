@@ -27,13 +27,16 @@ import time
 from rich.progress import Progress
 
 # Constants
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 SALT_SIZE = 16
 KEY_SIZE = 32
 NONCE_SIZE = 12
 TAG_SIZE = 16
 ITERATIONS = 100_000
 
+def output_dir(out_dir):
+    # Ensure output directory exists
+    os.makedirs(out_dir, exist_ok=True)
 
 def get_dynamic_buffer_size(file_path):
     """Determine the buffer size based on file size dynamically."""
@@ -62,9 +65,12 @@ def derive_key(password: str, salt: bytes) -> bytes:
     """Derive a 256-bit key from the password using PBKDF2."""
     return PBKDF2(password, salt, dkLen=KEY_SIZE, count=ITERATIONS)
 
-def encrypt_file(file_path, buffersize, password, output_dir):
+def encrypt_file(file_path, password, output_dir):
+
     """Encrypt a file using AES-GCM (Authenticated Encryption)."""
     start = time.perf_counter() # starting time counter
+    buffersize= get_dynamic_buffer_size(file_path)
+    print(f"Buffer size: {buffersize}")
     try:
         with Progress() as progress:
             encrypt_task = progress.add_task('[cyan]Encrypt file...')
@@ -73,7 +79,11 @@ def encrypt_file(file_path, buffersize, password, output_dir):
             nonce = get_random_bytes(NONCE_SIZE)
             
             cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
-            encrypted_file = os.path.join(output_dir, Path(file_path).name + ".aes")
+
+            if output_dir:
+                encrypted_file = os.path.join(output_dir, Path(file_path).name + ".aes")
+            else:
+                encrypted_file = file_path + ".aes"
     
             with open(file_path, "rb") as f_in, open(encrypted_file, "wb") as f_out:
                 f_out.write(salt + nonce)  # Store salt + nonce for decryption
@@ -106,7 +116,10 @@ def decrypt_file(file_path, password, output_dir):
 
                 cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
 
-                decrypted_file = os.path.join(output_dir, Path(file_path).stem)
+                if output_dir:
+                    decrypted_file = os.path.join(output_dir, Path(file_path).stem)
+                else:
+                    decrypted_file = file_path.removesuffix('.aes')
 
                 with open(decrypted_file, "wb") as f_out:
                     ciphertext = f_in.read()
@@ -118,83 +131,79 @@ def decrypt_file(file_path, password, output_dir):
                         time.sleep(0.05)
                 ending = time.perf_counter() # end time counter
 
-                print(f"Decryption successful! File saved at: {decrypted_file}")
-                print(f"Total encryption time: {ending-start:.6f} seconds")
+        print(f"Decryption successful! File saved at: {decrypted_file}")
+        print(f"Total encryption time: {ending-start:.6f} seconds")
 
     except ValueError:
         print("Error: Decryption failed! Incorrect password or corrupted file.")
-        os.remove(os.path.join(output_dir, Path(file_path).stem))
+        os.remove(file_path.removesuffix('.aes'))
     except FileNotFoundError:
         print("Error: File not found.")
     except Exception as e:
         print(f"Decryption failed: {e}")
+    del password
 
 def main():
     #arguments
     parser = argparse.ArgumentParser(description="AES Encryption Tool")
     parser.add_argument('-v', '--version', action='version', version=f"AES Tool {VERSION}")
-    parser.add_argument('-m', '--mode', type=str, choices=['e', 'd'], help="Mode: 'e' for encryption, 'd' for decryption")
+    #parser.add_argument('-m', '--mode', type=str, choices=['e', 'd'], help="Mode: 'e' for encryption, 'd' for decryption")
     parser.add_argument('-f', '--file', type=str, help="File to encrypt/decrypt")
     parser.add_argument('-p', '--password', type=str, help="Password (or provide a file path containing the password)")
-    parser.add_argument('-o', '--output', type=str, default="./", help="Output directory")
+    parser.add_argument('-o', '--output', type=str, help="Output directory")
     args = parser.parse_args()
 
-    if not args.mode or not args.file:
-        parser.print_help()
-        sys.exit(2)
 
     # Resolve files
-    if os.path.isfile(args.file):
-        if not args.file.endswith('.aes') and not args.mode == 'e':
-            print("Error: not .aes file!")
-            sys.exit(3)
-    else:
-        print("File not found!")
-        sys.exit(4)
-    
-    # Resolve password
-    if args.password and os.path.isfile(args.password):
-        with open(args.password, "r") as f:
-            password = f.readline().strip()
-        confirm_password = password
-
-    elif args.password and args.mode == 'e':
-        confirm_password = getpass.getpass("Confirm password: ")
-
-    else:
-        if args.mode == 'e':
-            password = getpass.getpass("Enter the password: ")
-            confirm_password = getpass.getpass("Confirm password: ")
+    if args.file:
+        file = args.file
+        if os.path.isfile(file):
+            if not file.endswith('.aes'):
+                if args.password and os.path.isfile(args.password):
+                    with open(args.password, "r") as f:
+                        password = f.readline().strip()
+                    confirm_password = password
+                
+                elif args.password and args.mode == 'e':
+                    confirm_password = getpass.getpass("Confirm password: ")
+                else:
+                    password = getpass.getpass("Enter the password: ")
+                    confirm_password = getpass.getpass("Confirm password: ")
+                    if password != confirm_password:
+                        print("Error: password not matched!")
+                        del password
+                        del confirm_password
+                        sys.exit(1)
+                    else:
+                        print("Success: password matched!")
+                if args.output:
+                    output_dir(args.output)
+                
+                encrypt_file(file, password, args.output)
+                del password
+                del confirm_password
+            else:
+                if args.password and os.path.isfile(args.password):
+                    with open(args.password, "r") as f:
+                        password = f.readline().strip()
+                else:
+                    password = getpass.getpass("Enter the password: ")
+                file_size = os.path.getsize(file)
+                total_ram = psutil.virtual_memory().total
+                print(f"File path: {file}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes\nLrage file may take time")
+                decrypt_file(file, password, args.output)
+                del password
         else:
-            password = getpass.getpass("Enter the password: ")
+            print("Faild: file not found!")
+            sys.exit(2)
+    else:
+        parser.print_help()
+        sys.exit(3)
 
-
-    # Ensure output directory exists
-    os.makedirs(args.output, exist_ok=True)
-    buffersize= get_dynamic_buffer_size(args.file)
-
-    if args.mode == "e":
-        if password != confirm_password:
-            print("Error: password not matched!")
-            del confirm_password
-            sys.exit(5)
-        else:
-            print("Success: password matched!")
-            print(f"Buffer size: {buffersize}")
-            encrypt_file(args.file, buffersize, password, args.output)
-
-    elif args.mode == "d":
-        
-        file_size = os.path.getsize(args.file)
-        total_ram = psutil.virtual_memory().total
-        print(f"File path: {args.file}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes\nLrage file may take time")
-        decrypt_file(args.file, password, args.output)
-            
-
-    # Wipe password from memory
-    del password
 
 if __name__ == "__main__":
     global password
     global confirm_password
     main()
+
+#pyinstaller --onefile --hidden-import=psutil --hidden-import=Crypto.Cipher._raw_aes --hidden-import=Crypto.Cipher.AES --name "aes-tool" main.py
