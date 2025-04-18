@@ -82,7 +82,7 @@ sudo chmod +x install.sh &&\
     <tr>
       <td>aes-tool (GUI & terminal tool)</td>
       <td>1.2.0</td>
-      <td><a href="">Uploaded soon</a></td>
+      <td><a href="https://drive.google.com/uc?id=14fx--3sq0EpGNAZPaU7MD_WbHMEuLNuU&export=download">aes-tool-winv1.2.0</a></td>
     </tr>
     <tr>
       <td rowspan='2'>Linux (tested on debian based)</td>

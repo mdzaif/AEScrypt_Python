@@ -145,7 +145,7 @@ def decrypt_file(file_path, password, output_dir):
 
 def main():
     #arguments
-    parser = argparse.ArgumentParser(description="AES Encryption Tool")
+    parser = argparse.ArgumentParser(description="AES Encryption Tool; GNU GENERAL PUBLIC LICENSE version 3")
     parser.add_argument('-v', '--version', action='version', version=f"AES Tool {VERSION}")
     #parser.add_argument('-m', '--mode', type=str, choices=['e', 'd'], help="Mode: 'e' for encryption, 'd' for decryption")
     parser.add_argument('-f', '--file', type=str, help="File to encrypt/decrypt")

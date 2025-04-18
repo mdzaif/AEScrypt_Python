@@ -40,3 +40,4 @@ if __name__ == "__main__":
             decrypt_window(file_to_open)
 
 #pyinstaller --onefile --windowed --add-data "assets/aes_tool_icon.ico;assets" --icon=assets/aes_tool_icon.ico --hidden-import=psutil --hidden-import=Crypto.Cipher._raw_aes --hidden-import=Crypto.Cipher.AES --name "aes-gui" main.py
+

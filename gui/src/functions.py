@@ -21,7 +21,11 @@ from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
 import psutil
 import time
+from tqdm.tk import tqdm
 import tkinter as tk
+from tkinter import ttk
+from threading import Thread
+import platform
 
 #Constant
 SALT_SIZE = 16
@@ -31,11 +35,28 @@ TAG_SIZE = 16
 ITERATIONS = 100_000
 
 
+def apply_system_theme():
+    system = platform.system()
+    style = ttk.Style()
+    
+    if system == "Windows":
+        try:
+            style.theme_use('vista')
+        except:
+            style.theme_use('winnative')
+    elif system == "Darwin":  # macOS
+        try:
+            style.theme_use('aqua')
+        except:
+            style.theme_use('clam')
+    else:  # Linux and others
+        style.theme_use('clam')
+
 def get_dynamic_buffer_size(file_path):
     """Determine the buffer size based on file size dynamically."""
     file_size = os.path.getsize(file_path)
     total_ram = psutil.virtual_memory().total
-    print(f"File path: {file_path}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes")
+    print(f"File path: {file_path}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes\nLarge files take time. Please wait...")
     cal = 1024 * 1024 * 1024
     if total_ram <= 2 * cal: # 2 GB RAM
         return 64 * 1024
@@ -87,7 +108,10 @@ def encrypt_file(file_path, password):
         print(f"Encryption failed: {e}")
 
 def decrypt_file(file_path, password):
-    global password_entry, toggle_btn, confirm_entry, submit_btn, root
+    #global password_entry, toggle_btn, confirm_entry, submit_btn, root
+    file_size = os.path.getsize(file_path)
+    total_ram = psutil.virtual_memory().total
+    print(f"File path: {file_path}\nFile size: {file_size} bytes\nTotal system ram: {total_ram} bytes\nLarge files take time. Please wait...")
     """Decrypt a file using AES-GCM (Authenticated Decryption)."""
     start = time.perf_counter() # starting time counter
     try:
