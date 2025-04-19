@@ -149,7 +149,7 @@ Now save the file and exit with `Ctrl+S` and `Ctrl+X` press respectively for nan
 
 <b>Step 4: </b> Open `Menu` or `Launcher` and search this application. You will see like this
 
-<img src='reources/Capture8.PNG'></img>
+<img src='resources/Capture8.PNG'></img>
 
 
 ## Assets
