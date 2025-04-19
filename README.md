@@ -61,6 +61,23 @@ Now move open `Edit the system environment variables` then follow those images
 
 5. Your all done :)
 
+## GUI View
+
+1. Encryption
+
+<img src='resources/Capture9.PNG'></img>
+
+You can directly declare the file path shown in decryption section
+
+2. Decryption
+
+<img src='resources/Capture10.PNG'></img>
+
+3. Logs
+
+<img src='resources/Capture11.PNG'><img>
+
+
 ## Linux setup
 
 1. Downlaod binary file from <a href="#assets">here</a>.
@@ -74,6 +91,66 @@ sudo chmod +x install.sh &&\
 ```
 
 3. Your all done :)
+
+## GUI View
+
+1. Initial View by terminal
+
+<img src='resources/Capture4.PNG'></img>
+
+You can directly declare the file path like:
+
+```bash
+aes-gui /file/path
+```
+
+2. Encryption
+
+<img src='resources/Capture5.PNG'></img>
+
+3. Decryption
+
+<img src='resources/Capture6.PNG'></img>
+
+4. Logs
+
+<img src='resources/Capture7.PNG'></img>
+
+
+<p>In Linux, by default you can not find the desktop icon of that application, what you can do just follow those steps:</p><br>
+
+<b> Step 1:</b> Open your terminal and visit this `~/.local/share/applications` directory.
+
+```bash
+cd ~/.local/share/applications
+```
+
+<b>Step 2:</b> Create a `aesgui.desktop` file.
+
+```bash
+nano aesgui.desktop # if you don't have nano you can use vim or any other text editor to open this file
+```
+
+<b>Step 3: </b>Copy and paste those line in that file.
+```ino
+[Desktop Entry]
+ Encoding=UTF-8
+ Name=AES GUI Tool
+ Comment=Encrypt and Decrypt Files
+ Exec=$HOME/aes-tool-linuxv1.2.0/aes-gui
+ Icon=$HOME/aes-tool-linuxv1.2.0/assets/aes_tool_icon.png
+ Categories=Application
+ Type=Application
+ Terminal=flase
+```
+<b>Note: </b> Icon will not appear while search because some issue's here.<br>
+
+Now save the file and exit with `Ctrl+S` and `Ctrl+X` press respectively for nano text editor.
+
+<b>Step 4: </b> Open `Menu` or `Launcher` and search this application. You will see like this
+
+<img src='reources/Capture8.PNG'></img>
+
 
 ## Assets
 
@@ -107,7 +184,7 @@ sudo chmod +x install.sh &&\
     <tr>
       <td>aes-tool (GUI & terminal tool)</td>
       <td>1.2.0</td>
-      <td><a href="https://drive.google.com/uc?id=1KZhmUhYveCHgmluQfJ3EkoVdNhUx3fCQ&export=download">aes-toll-linuxv1.2.0</a></td>
+      <td><a href="https://drive.google.com/uc?id=1KZhmUhYveCHgmluQfJ3EkoVdNhUx3fCQ&export=download">aes-tool-linuxv1.2.0</a></td>
     </tr>
   </tbody>
 </table>
