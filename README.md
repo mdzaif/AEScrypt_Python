@@ -4,13 +4,27 @@ AEScrypt windows terminal tool develop with python. Current AEScrypt software is
 ## About New version
 
 <ul>
-  <li>Dynamic buffer size to adjust with system requirment. So, it will help you to achieve the best performance while encrypt the file.</li>
-  <li>Make more secure. You have to use same tool to encrypt and decrypt your file.</li>
-  <li>Fix some bugs. </li>
-  <li>Add progress bar.</li>
+  <li>Add gui version</li>
+  <li>Remove mode arguments from terminal tools</li>
 </ul>
 
 ## Usages
+
+From Newer version(v1.2.0):
+
+1. Encryption:
+
+```bash
+aes-tool.exe -f ./weights.zip -p ./AEScrypt_Python/src/pass.txt -p ./pass.txt -o ./
+```
+
+2. Decryption:
+
+```bash
+aes-tool.exe -f ./weights.zip.aes -p ./pass.txt -o ./
+```
+
+Older version(1.1.0 or less):
 
 1. Encryption:
 
@@ -49,12 +63,12 @@ Now move open `Edit the system environment variables` then follow those images
 
 ## Linux setup
 
-1. Downlaod binary file from <a href="https://drive.google.com/drive/folders/1oFs8Ghn3kVqO2trSB9fpzlqojnX0wjbv?usp=drive_link">here</a>.
+1. Downlaod binary file from <a href="#assets">here</a>.
 
 2. Then extract it and finally follow those command
 
 ```bash
-cd  < dowloanded file > &&\
+cd  *dowloanded file*  &&\
 sudo chmod +x install.sh &&\
 ./install.sh
 ```
@@ -93,7 +107,7 @@ sudo chmod +x install.sh &&\
     <tr>
       <td>aes-tool (GUI & terminal tool)</td>
       <td>1.2.0</td>
-      <td><a href="">Uploaded soon</a></td>
+      <td><a href="https://drive.google.com/uc?id=1KZhmUhYveCHgmluQfJ3EkoVdNhUx3fCQ&export=download">aes-toll-linuxv1.2.0</a></td>
     </tr>
   </tbody>
 </table>

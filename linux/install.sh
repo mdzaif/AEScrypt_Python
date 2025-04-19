@@ -14,13 +14,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-# extract your zip file then we move 'aes-tool' binray in /usr/bin directory for act as terminal tool
+
+
+# extract your zip file then move thatdirectory to the $HOME directory.
 # first enter that directory if you do it manually
-# run that line and your done
-sudo cp aes-tool /usr/bin/
+# run that line mark by "#run it  ..." and your done
+
+
+# install dependencies
+sudo apt update && sudo apt install python-tk # run it ...1 
+
 if [ $? -eq 0 ];then
-	echo "Operation success!"
+        echo 'export PATH="$HOME/aes-tool-linuxv1.2.0/:$PATH"' >> ~/.bashrc # run it ...2
+        source ~/.bashrc # run it ...3
+        if [ $? -eq 0 ];then
+                echo "Operation success!"
+        else
+                echo "Operation faild!"
+        fi
 else
-	echo "Operation faild!"
+        echo "Operation faild!"
 fi
-# you can remove this directory
+

@@ -21,7 +21,6 @@ from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Random import get_random_bytes
 import psutil
 import time
-from tqdm.tk import tqdm
 import tkinter as tk
 from tkinter import ttk
 from threading import Thread
@@ -35,8 +34,12 @@ TAG_SIZE = 16
 ITERATIONS = 100_000
 
 
-def apply_system_theme():
-    system = platform.system()
+def system_plat():
+    
+    return platform.system()
+
+def apply_system_theme(window):
+    system = system_plat()
     style = ttk.Style()
     
     if system == "Windows":
@@ -51,6 +54,10 @@ def apply_system_theme():
             style.theme_use('clam')
     else:  # Linux and others
         style.theme_use('clam')
+        window.config(bg="white")
+        window.option_add("*background", "white")
+        window.option_add("*foreground", "black")
+    
 
 def get_dynamic_buffer_size(file_path):
     """Determine the buffer size based on file size dynamically."""

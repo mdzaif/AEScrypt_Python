@@ -16,6 +16,7 @@
 
 from functions import *
 from threading import Thread
+from  tkinter import  PhotoImage
 
 
 class EnterButton(ttk.Button):
@@ -25,16 +26,37 @@ class EnterButton(ttk.Button):
         self.bind('<Return>', lambda event: self.invoke())
 
 
-
 def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
     try:
-        base_path = sys._MEIPASS  # This exists in PyInstaller bundles
+        base_path = sys._MEIPASS
     except AttributeError:
         base_path = os.path.abspath(".")
-
     return os.path.join(base_path, relative_path)
 
-icon_path = resource_path("assets/aes_tool_icon.ico")
+def set_window_icon(root):
+    """Properly sets the window icon for all platforms"""
+    system = system_plat()
+    if system == "windows":
+        # Windows - use .ico with iconbitmap
+        try:
+            icon_path = resource_path("assets/aes_tool_icon.ico")
+            root.iconbitmap(icon_path)
+            return
+        except Exception as e:
+            print(f"Windows icon error: {e}")
+    
+    # Linux/Mac - use PNG with iconphoto
+    try:
+        icon_path = resource_path("assets/aes_tool_icon.png")
+        if not os.path.exists(icon_path):
+            raise FileNotFoundError(f"Icon file not found at {icon_path}")
+            
+        img = PhotoImage(file=icon_path)
+        root.iconphoto(True, img)  # Set icon for all windows
+    except Exception as e:
+        print(f"Failed to load icon: {e}")
+        # Continue without icon if loading fails
 
 def close_window(window):
     window.destroy()
@@ -88,7 +110,7 @@ def show_log_window(file_to_open, password):
             pass
 
     log_window = tk.Tk()
-    apply_system_theme()
+    apply_system_theme(log_window)
     # Set a fixed window size
     window_width = 600
     window_height = 350
@@ -101,7 +123,7 @@ def show_log_window(file_to_open, password):
     y = (screen_height // 2) - (window_height // 2)
     # Apply the calculated position
     log_window.geometry(f"+{x}+{y}")
-    log_window.iconbitmap(icon_path)
+    log_window.iconbitmap(set_window_icon(log_window))
     log_window.resizable(False, False)
 
     log_display = tk.Text(log_window, height=15, width=80, wrap="word")
@@ -132,12 +154,16 @@ def encrypt_window(file):
     global password_entry, confirm_entry, toggle_btn, file_to_open, submit_btn, root
     file_to_open = file
     root = tk.Tk()
-    apply_system_theme()
+    apply_system_theme(root)
     # Set a fixed window size
     window_width = 500
-    window_height = 150
+    if system_plat() == "windows":
+        window_height = 150
+    else:
+        window_height = 200
+
     root.geometry(f"{window_width}x{window_height}")
-    root.iconbitmap(icon_path)
+    root.iconbitmap(set_window_icon(root))
     root.resizable(False, False)
     root.title("Encrypt File")
     # Calculate position to center the window
@@ -173,13 +199,16 @@ def encrypt_window(file):
 def decrypt_window(file_to_open):
     global password_entry, toggle_btn, s_btn, root1
     root1 = tk.Tk()
-    apply_system_theme()
+    apply_system_theme(root1)
     # Set a fixed window size
-    window_width = 400
+    if system_plat() == "Windows":
+        window_width = 400
+    else:
+        window_width = 450
     window_height = 150
     root1.geometry(f"{window_width}x{window_height}")
     #root1.geometry("400x150")
-    root1.iconbitmap(icon_path)
+    root1.iconbitmap(set_window_icon(root1))
     root1.resizable(False, False)
     root1.title("Decrypt File")
     # Calculate position to center the window
