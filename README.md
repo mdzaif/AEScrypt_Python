@@ -141,7 +141,7 @@ nano aesgui.desktop # if you don't have nano you can use vim or any other text e
  Icon=$HOME/aes-tool-linuxv1.2.0/assets/aes_tool_icon.png
  Categories=Application
  Type=Application
- Terminal=flase
+ Terminal=false
 ```
 <b>Note: </b> Icon will not appear while search because some issue's here.<br>
 
