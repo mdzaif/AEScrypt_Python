@@ -23,7 +23,6 @@ import psutil
 import time
 import tkinter as tk
 from tkinter import ttk
-from ttkthemes import ThemedStyle
 import darkdetect 
 from threading import Thread
 import platform
@@ -47,26 +46,21 @@ def apply_system_theme(window):
     system = system_plat()
     style = ttk.Style()
     
-    # Detect system theme
-    theme = darkdetect.theme().lower()  # Returns 'dark' or 'light'
-    window.tk.call('source', r'E:\\github\\AEScrypt_Python\\Forest-ttk-theme\\forest-dark.tcl')
-    # Apply the theme
-    ttk.Style().theme_use('forest-dark')
-    # if system == "Windows":
-    #     try:
-    #         style.theme_use('forest-dark')
-    #     except:
-    #         style.theme_use('winnative')
-    # elif system == "Darwin":  # macOS
-    #     try:
-    #         style.theme_use('aqua')
-    #     except:
-    #         style.theme_use('clam')
-    # else:  # Linux and others
-    #     style.theme_use('clam')
-    #     window.config(bg="white")
-    #     window.option_add("*background", "white")
-    #     window.option_add("*foreground", "black")
+    if system == "Windows":
+        try:
+            style.theme_use('vista')
+        except:
+            style.theme_use('winnative')
+    elif system == "Darwin":  # macOS
+        try:
+            style.theme_use('aqua')
+        except:
+            style.theme_use('clam')
+    else:  # Linux and others
+        style.theme_use('clam')
+        window.config(bg="white")
+        window.option_add("*background", "white")
+        window.option_add("*foreground", "black")
 
 def get_dynamic_buffer_size(file_path):
     """Determine the buffer size based on file size dynamically."""
