@@ -1,0 +1,15 @@
+[project]
+name = "aescrypt-python"
+version = "0.1.0"
+description = "GUI version of aescrypt-python"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cryptography==44.0.2",
+    "darkdetect>=0.8.0",
+    "psutil>=7.0.0",
+    "pycryptodome>=3.23.0",
+    "pygemnts>=89.0.1",
+    "pyinstaller>=6.14.1",
+    "rich>=14.0.0",
+]
