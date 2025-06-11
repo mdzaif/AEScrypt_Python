@@ -154,37 +154,4 @@ Now save the file and exit with `Ctrl+S` and `Ctrl+X` press respectively for nan
 
 ## Assets
 
-<table>
-  <thead>
-    <tr>
-      <th>Platform</th>
-      <th>Package</th>
-      <th>Version</th>
-      <th>Download Link</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td rowspan='2'> Windows 10+ </td>
-      <td>aes-tool (terminal tool)</td>
-      <td>1.1.0</td>
-      <td><a href="https://drive.google.com/uc?id=14nd6W5-mQZTtO9aHBYufIZF9pMpfUl4L&export=download">aes-tool-winv1.1.0</a></td>
-    </tr>
-    <tr>
-      <td>aes-tool (GUI & terminal tool)</td>
-      <td>1.2.0</td>
-      <td><a href="https://drive.google.com/uc?id=14fx--3sq0EpGNAZPaU7MD_WbHMEuLNuU&export=download">aes-tool-winv1.2.0</a></td>
-    </tr>
-    <tr>
-      <td rowspan='2'>Linux (tested on debian based)</td>
-      <td>aes-tool (terminal tool)</td>
-      <td>1.1.0</td>
-      <td><a href="https://drive.google.com/uc?id=19U16UEoRObDu5T-LSQbVQrB7MPNbX7ag&export=download">aes-tool-linux-v1.1.0</a></td>
-    </tr>
-    <tr>
-      <td>aes-tool (GUI & terminal tool)</td>
-      <td>1.2.0</td>
-      <td><a href="https://drive.google.com/uc?id=1KZhmUhYveCHgmluQfJ3EkoVdNhUx3fCQ&export=download">aes-tool-linuxv1.2.0</a></td>
-    </tr>
-  </tbody>
-</table>
+Check Release section for tools.
